@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hungarian Wine Quiz</title>
+    <style>
+        body {
+    font-family: 'Georgia', serif;
+    color: #4B0082; /* deep wine purple */
+    background: url('https://www.transparenttextures.com/patterns/grapes.png') repeat;
+    background-color: #fff8f0;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #8B0000;
+    text-shadow: 2px 2px #FFD700;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1.2em;
+    color: #5a2d2d;
+    margin-bottom: 20px;
+}
+
+.question {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin: 15px auto;
+    padding: 15px;
+    width: 80%;
+    text-align: left;
+    font-size: 1.1em;
+}
+
+.question p {
+    font-weight: bold;
+    color: #4B0082;
+}
+
+label {
+    display: block;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+button {
+    padding: 12px 20px;
+    margin: 15px 10px;
+    background-color: #8B0000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #a52a2a;
+}
+
+#result {
+    font-size: 20px;
+    margin-top: 25px;
+    color: #4B0082;
+    font-weight: bold;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    width: 80%;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+    </style>
+</head>
+<body>
+    <h1>🍷 Which Hungarian Wine Matches Your Inner Self? 🍇</h1>
+    <p>Answer 5 random questions and discover your wine soulmate!</p>
+    <div id="quiz"></div>
+    <button onclick="submitQuiz()">See My Wine!</button>
+    <div id="result"></div>
+    <button onclick="loadQuiz()">Retake Quiz</button>
+
+    <script>
+        const wines = ["Tokaji Aszú", "Egri Bikavér", "Irsai Olivér", "Juhfark", "Kékfrankos"];
+
+        const wineDescriptions = {
+            "Tokaji Aszú": "Sweet, elegant, and a little royal. You probably deserve a crown 👑.",
+            "Egri Bikavér": "Bold and strong, like your opinions in meetings 💪.",
+            "Irsai Olivér": "Fresh, fun, and full of summer vibes 🌞.",
+            "Juhfark": "Fiery and adventurous. You’re the office wild card 🔥.",
+            "Kékfrankos": "Balanced and clever. The quiet strategist of the team 🦊."
+        };
+
+        const questions = [
+            { text: "What’s your spirit animal for a Friday night?", options: [
+                { answer: "Majestic owl", wine: "Tokaji Aszú" },
+                { answer: "Wild boar", wine: "Egri Bikavér" },
+                { answer: "Playful squirrel", wine: "Irsai Olivér" },
+                { answer: "Dragon", wine: "Juhfark" },
+                { answer: "Fox", wine: "Kékfrankos" }
+            ]},
+            { text: "If you were a Hungarian dish, which one would you be?", options: [
+                { answer: "Gulyás soup", wine: "Egri Bikavér" },
+                { answer: "Túró Rudi", wine: "Irsai Olivér" },
+                { answer: "Dobos torta", wine: "Tokaji Aszú" },
+                { answer: "Lángos", wine: "Juhfark" },
+                { answer: "Hortobágyi palacsinta", wine: "Kékfrankos" }
+            ]},
+            { text: "Pick a random superpower", options: [
+                { answer: "Turning everything into gold", wine: "Tokaji Aszú" },
+                { answer: "Breathing fire", wine: "Juhfark" },
+                { answer: "Teleportation", wine: "Irsai Olivér" },
+                { answer: "Mind-reading", wine: "Kékfrankos" },
+                { answer: "Super Strength", wine: "Egri Bikavér" }
+            ]},
+            { text: "What's your ideal holiday type?", options: [
+                { answer: "Mountain getaway", wine: "Tokaji Aszú" },
+                { answer: "City break", wine: "Egri Bikavér" },
+                { answer: "Sunbathing next to the sea", wine: "Irsai Olivér"},
+                { answer: "Family holiday", wine: "Juhfark"},
+                { answer: "Spa holiday", wine: "Kékfrankos"}
+            ]},
+            { text: "If you were a color in a folk embroidery pattern, which would you be?", options: [
+                { answer: "Gold", wine: "Tokaji Aszú" },
+                { answer: "Deep red", wine: "Egri Bikavér" },
+                { answer: "Bright green", wine: "Irsai Olivér"},
+                { answer: "Fiery Orange", wine: "Juhfark"},
+                { answer: "Burgundy", wine: "Kékfrankos"}
+            ]},
+            { text: "If you were a Hungarian folk tale character, who would you be?", options: [
+                { answer: "The loyal knight", wine: "Kékfrankos" },
+                { answer: "The dragon", wine: "Juhfark" },
+                { answer: "The cheeky trickster", wine: "Irsai Olivér"},
+                { answer: "The fearless warrior", wine: "Egri Bikavér"},
+                { answer: "The wise old king", wine: "Tokaji Aszú"}
+            ]},
+            { text: "What’s your reaction when someone says “free food in the office”?", options: [
+                { answer: "Grab a plate and make a tower", wine: "Juhfark" },
+                { answer: "Sprint like it’s the Olympics", wine: "Egri Bikavér" },
+                { answer: "Casually stroll, humming a tune", wine: "Irsai Olivér"},
+                { answer: "Gracefully walk over and take one piece", wine: "Tokaji Aszú"},
+                { answer: "Pretend you’re not interested but secretly take two", wine: "Kékfrankos"}
+            ]},
+            { text: "If your life had a soundtrack, what would it be?", options: [
+                { answer: "Heavy metal riffs", wine: "Juhfark" },
+                { answer: "Epic movie score", wine: "Egri Bikavér" },
+                { answer: "Chill summer vibes", wine: "Irsai Olivér"},
+                { answer: "A classical symphony", wine: "Tokaji Aszú"},
+                { answer: "Indie acoustic playlist", wine: "Kékfrankos"}
+            ]},
+            { text: "Which office habit annoys you the most?", options: [
+                { answer: "Traffic jam at the coffee machine", wine: "Juhfark" },
+                { answer: "Loud chewing", wine: "Egri Bikavér" },
+                { answer: "People stealing your pen/mouse/place", wine: "Irsai Olivér"},
+                { answer: "Endless meetings", wine: "Tokaji Aszú"},
+                { answer: "Reply-all emails", wine: "Kékfrankos"}
+            ]},
+            { text: "If you could rename Monday, what would you call it?", options: [
+                { answer: "Chaos-day", wine: "Juhfark" },
+                { answer: "Battle-day", wine: "Egri Bikavér" },
+                { answer: "Nap-day", wine: "Irsai Olivér"},
+                { answer: "Wine-day", wine: "Tokaji Aszú"},
+                { answer: "Coffee-day", wine: "Kékfrankos"}
+            ]}
+        ];
+
+        function getRandomQuestions(num) {
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, num);
+        }
+
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            quizDiv.innerHTML = "";
+            const selectedQuestions = getRandomQuestions(5);
+            selectedQuestions.forEach((q, index) => {
+                const qDiv = document.createElement("div");
+                qDiv.className = "question";
+                qDiv.innerHTML = `<p>${index + 1}. ${q.text}</p>`;
+                q.options.forEach(opt => {
+                    qDiv.innerHTML += `
+                        <label>
+                            <input type="radio" name="q${index}" value="${opt.wine}"> ${opt.answer}
+                        </label><br>`;
+                });
+                quizDiv.appendChild(qDiv);
+            });
+        }
+
+        function submitQuiz() {
+            const answers = document.querySelectorAll("input[type=radio]:checked");
+            const wineCount = {};
+            answers.forEach(a => {
+                wineCount[a.value] = (wineCount[a.value] || 0) + 1;
+            });
+            let resultWine = Object.keys(wineCount).reduce((a, b) => wineCount[a] > wineCount[b] ? a : b);
+            document.getElementById("result").innerHTML = `Your wine match is: <b>${resultWine}</b> 🍷<br>${wineDescriptions[resultWine]}`;
+        }
+
+        loadQuiz();
+    </script>
+</body>
+</html>
